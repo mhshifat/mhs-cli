@@ -1,0 +1,36 @@
+{
+  "name": "@mhshifat/mhs-cli",
+  "version": "1.1.3",
+  "main": "lib/index.js",
+  "description": "Command line tool to manage some actions",
+  "bin": {
+    "mhs-cli": "lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "ts-node src/index.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@mhshifat/mhs-cli": "^1.0.3",
+    "@types/fs-extra": "^9.0.4",
+    "@types/inquirer": "^7.3.1",
+    "@types/node": "^14.14.9",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^6.2.0",
+    "fs-extra": "^9.0.1",
+    "inquirer": "^7.3.3",
+    "ora": "^5.1.0"
+  }
+}
