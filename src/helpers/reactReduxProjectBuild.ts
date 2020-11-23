@@ -82,7 +82,61 @@ export default async ({
         }
       );
     } else {
-      spinner.text = "Generate Typescript react project...";
+      exec(
+        `npx create-react-app ${folderName} --template=typescript`,
+        (error: ExecException | null, stdout: string, stderr: string) => {
+          if (error) {
+            spinner?.fail(
+              chalk.red("Failed to generate your react-redux app 😢")
+            );
+            return;
+          }
+          exec(`rm -rf ${folderName}/src`);
+          exec(`rm -rf ${folderName}/public`);
+          exec(
+            `cd ${folderName} && ${
+              packageManager === "npm"
+                ? "npm i"
+                : packageManager === "yarn"
+                ? "yarn add"
+                : "npm i"
+            } react-router-dom redux react-redux redux-thunk redux-devtools-extension @types/react-redux @types/react-router-dom`
+          );
+          const source = path.join(
+            __dirname,
+            "..",
+            "..",
+            "examples",
+            "react-redux-ts"
+          );
+          const destination = folderName;
+          fs.copy(source, destination, async (err) => {
+            if (err) {
+              console.log(err);
+              spinner?.fail(
+                chalk.red("Failed to generate your react-redux app 😢")
+              );
+              process.exit(1);
+            } else {
+              try {
+                const packageJSON = require(path.join(
+                  process.cwd() + "/" + folderName + "/package.json"
+                ));
+                await fs.writeFile(
+                  path.join(process.cwd() + "/" + folderName + "/package.json"),
+                  JSON.stringify(
+                    { ...packageJSON, name: projectName || packageJSON.name },
+                    null,
+                    2
+                  ),
+                  "utf8"
+                );
+              } catch (err) {}
+              spinner?.succeed("All set 👌");
+            }
+          });
+        }
+      );
     }
   }
 };
