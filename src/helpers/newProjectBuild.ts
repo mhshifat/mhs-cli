@@ -1,5 +1,7 @@
 import inquirer from "inquirer";
 import ora from "ora";
+import nodeMongodbRestProjectBuild from "./nodeMongodbRestProjectBuild";
+import nodeRestProjectBuild from "./nodeRestProjectBuild";
 import reactGqlProjectBuild from "./reactGqlProjectBuild";
 import reactProjectBuild from "./reactProjectBuild";
 import reactReduxProjectBuild from "./reactReduxProjectBuild";
@@ -34,9 +36,24 @@ export default async (
       type: "list",
       name: "apiAppType",
       message: "What type of server do you need?",
-      choices: ["node", "node-graphql"],
+      choices: ["node-rest", "node-graphql"],
       when: (allAnswerers) => {
         return allAnswerers.projectType === "API";
+      },
+    },
+    {
+      type: "confirm",
+      name: "includeDb",
+      message: "Do you want to include db setup in your project?",
+      default: false,
+    },
+    {
+      type: "list",
+      name: "apiAppDBType",
+      message: "What type of database do you need?",
+      choices: ["mongodb"],
+      when: (allAnswerers) => {
+        return allAnswerers.includeDb;
       },
     },
     {
@@ -83,5 +100,29 @@ export default async (
       break;
     default:
       break;
+  }
+
+  if (answerers.apiAppType === "node-rest" && !answerers.includeDb) {
+    await nodeRestProjectBuild({
+      folderName,
+      projectName: answerers.projectName,
+      useTypeScript: answerers.isTypeScriptProject,
+      packageManager: answerers.packageManager,
+      spinner,
+    });
+  }
+
+  if (
+    answerers.apiAppType === "node-rest" &&
+    answerers.includeDb &&
+    answerers.apiAppDBType === "mongodb"
+  ) {
+    await nodeMongodbRestProjectBuild({
+      folderName,
+      projectName: answerers.projectName,
+      useTypeScript: answerers.isTypeScriptProject,
+      packageManager: answerers.packageManager,
+      spinner,
+    });
   }
 };

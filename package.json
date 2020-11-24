@@ -1,6 +1,6 @@
 {
   "name": "@mhshifat/mhs-cli",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "main": "lib/index.js",
   "description": "Command line tool to manage some actions",
   "bin": {
