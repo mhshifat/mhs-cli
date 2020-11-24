@@ -1,10 +1,10 @@
 import chalk from "chalk";
-import { exec, ExecException } from "child_process";
 import fs from "fs-extra";
 import ora from "ora";
 import path from "path";
+import { execShellCommand, writeToPackageJSON } from "../utils/index";
 
-export default async ({
+export default async function ({
   folderName,
   projectName,
   useTypeScript,
@@ -16,127 +16,95 @@ export default async ({
   useTypeScript: boolean;
   packageManager: string;
   spinner: ora.Ora | null;
-}) => {
+}) {
   spinner = ora({
     color: "green",
     text: "Generating your react-redux app ...",
   }).start();
+  const destination = folderName;
+  const packageManagerShellCmd =
+    packageManager === "npm"
+      ? "npm i"
+      : packageManager === "yarn"
+      ? "yarn add"
+      : "npm i";
   if (folderName !== "." && fs.existsSync(folderName)) {
     spinner?.fail(chalk.red("Folder name already exists 😢"));
     process.exit(1);
-  } else {
-    if (!useTypeScript) {
-      exec(
-        `npx create-react-app ${folderName}`,
-        (error: ExecException | null, stdout: string, stderr: string) => {
-          if (error) {
-            spinner?.fail(
-              chalk.red("Failed to generate your react-redux app 😢")
-            );
-            return;
-          }
-          exec(`rm -rf ${folderName}/src`);
-          exec(`rm -rf ${folderName}/public`);
-          exec(
-            `cd ${folderName} && ${
-              packageManager === "npm"
-                ? "npm i"
-                : packageManager === "yarn"
-                ? "yarn add"
-                : "npm i"
-            } react-router-dom redux react-redux redux-thunk redux-devtools-extension`
-          );
-          const source = path.join(
-            __dirname,
-            "..",
-            "..",
-            "examples",
-            "react-redux"
-          );
-          const destination = folderName;
-          fs.copy(source, destination, async (err) => {
-            if (err) {
-              console.log(err);
-              spinner?.fail(
-                chalk.red("Failed to generate your react-redux app 😢")
-              );
-              process.exit(1);
-            } else {
-              try {
-                const packageJSON = require(path.join(
-                  process.cwd() + "/" + folderName + "/package.json"
-                ));
-                await fs.writeFile(
-                  path.join(process.cwd() + "/" + folderName + "/package.json"),
-                  JSON.stringify(
-                    { ...packageJSON, name: projectName || packageJSON.name },
-                    null,
-                    2
-                  ),
-                  "utf8"
-                );
-              } catch (err) {}
-              spinner?.succeed("All set 👌");
-            }
-          });
-        }
-      );
-    } else {
-      exec(
-        `npx create-react-app ${folderName} --template=typescript`,
-        (error: ExecException | null, stdout: string, stderr: string) => {
-          if (error) {
-            spinner?.fail(
-              chalk.red("Failed to generate your react-redux app 😢")
-            );
-            return;
-          }
-          exec(`rm -rf ${folderName}/src`);
-          exec(`rm -rf ${folderName}/public`);
-          exec(
-            `cd ${folderName} && ${
-              packageManager === "npm"
-                ? "npm i"
-                : packageManager === "yarn"
-                ? "yarn add"
-                : "npm i"
-            } react-router-dom redux react-redux redux-thunk redux-devtools-extension @types/react-redux @types/react-router-dom`
-          );
-          const source = path.join(
-            __dirname,
-            "..",
-            "..",
-            "examples",
-            "react-redux-ts"
-          );
-          const destination = folderName;
-          fs.copy(source, destination, async (err) => {
-            if (err) {
-              console.log(err);
-              spinner?.fail(
-                chalk.red("Failed to generate your react-redux app 😢")
-              );
-              process.exit(1);
-            } else {
-              try {
-                const packageJSON = require(path.join(
-                  process.cwd() + "/" + folderName + "/package.json"
-                ));
-                await fs.writeFile(
-                  path.join(process.cwd() + "/" + folderName + "/package.json"),
-                  JSON.stringify(
-                    { ...packageJSON, name: projectName || packageJSON.name },
-                    null,
-                    2
-                  ),
-                  "utf8"
-                );
-              } catch (err) {}
-              spinner?.succeed("All set 👌");
-            }
-          });
-        }
-      );
-    }
   }
-};
+  try {
+    if (!useTypeScript) {
+      await generateReactReduxBoilerplate({
+        destination,
+        folderName,
+        packageManagerShellCmd,
+        projectName,
+        spinner,
+      });
+    } else {
+      await generateReactReduxTSBoilerplate({
+        destination,
+        folderName,
+        packageManagerShellCmd,
+        projectName,
+        spinner,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    spinner?.fail(chalk.red("Failed to generate your react-redux app 😢"));
+    process.exit(1);
+  }
+}
+
+async function generateReactReduxBoilerplate({
+  folderName,
+  packageManagerShellCmd,
+  destination,
+  projectName,
+  spinner,
+}: {
+  folderName: string;
+  packageManagerShellCmd: string;
+  destination: string;
+  projectName: string;
+  spinner: ora.Ora;
+}) {
+  const source = path.join(__dirname, "..", "..", "examples", "react-redux");
+  await execShellCommand(`npx create-react-app ${folderName}`);
+  await execShellCommand(`rm -rf ${folderName}/src`);
+  await execShellCommand(`rm -rf ${folderName}/public`);
+  await execShellCommand(
+    `cd ${folderName} && ${packageManagerShellCmd} react-router-dom redux react-redux redux-thunk redux-devtools-extension`
+  );
+  await fs.copy(source, destination);
+  await writeToPackageJSON({ folderName, projectName });
+  spinner?.succeed("All set 👌");
+}
+
+async function generateReactReduxTSBoilerplate({
+  folderName,
+  packageManagerShellCmd,
+  destination,
+  projectName,
+  spinner,
+}: {
+  folderName: string;
+  packageManagerShellCmd: string;
+  destination: string;
+  projectName: string;
+  spinner: ora.Ora;
+}) {
+  const source = path.join(__dirname, "..", "..", "examples", "react-redux-ts");
+  await execShellCommand(
+    `npx create-react-app ${folderName} --template=typescript`
+  );
+  await execShellCommand(`rm -rf ${folderName}/src`);
+  await execShellCommand(`rm -rf ${folderName}/public`);
+  await execShellCommand(
+    `cd ${folderName} && ${packageManagerShellCmd} react-router-dom redux react-redux redux-thunk redux-devtools-extension @types/react-redux @types/react-router-dom`
+  );
+  await fs.copy(source, destination);
+  await writeToPackageJSON({ folderName, projectName });
+  spinner?.succeed("All set 👌");
+}
