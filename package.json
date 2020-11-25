@@ -1,8 +1,8 @@
 {
   "name": "@mhshifat/mhs-cli",
-  "version": "1.1.8",
+  "version": "1.2.0",
   "main": "lib/index.js",
-  "description": "Command line tool to manage some actions",
+  "description": "Command line tool to setup NodeJS boilerplate project setup.",
   "bin": {
     "mhs-cli": "lib/index.js"
   },

@@ -1,5 +1,7 @@
 import inquirer from "inquirer";
 import ora from "ora";
+import nodeGQLProjectBuild from "./nodeGQLProjectBuild";
+import nodeMongodbGqlProjectBuild from "./nodeMongodbGqlProjectBuild";
 import nodeMongodbRestProjectBuild from "./nodeMongodbRestProjectBuild";
 import nodeRestProjectBuild from "./nodeRestProjectBuild";
 import reactGqlProjectBuild from "./reactGqlProjectBuild";
@@ -21,7 +23,7 @@ export default async (
       type: "list",
       name: "projectType",
       message: "What type of project do you need?",
-      choices: ["UI", "API"],
+      choices: ["ui", "api"],
     },
     {
       type: "list",
@@ -29,16 +31,16 @@ export default async (
       message: "What type of app do you need?",
       choices: ["react", "react-gql", "react-redux"],
       when: (allAnswerers) => {
-        return allAnswerers.projectType === "UI";
+        return allAnswerers.projectType === "ui";
       },
     },
     {
       type: "list",
       name: "apiAppType",
       message: "What type of server do you need?",
-      choices: ["node-rest", "node-graphql"],
+      choices: ["node-gql", "node-rest"],
       when: (allAnswerers) => {
-        return allAnswerers.projectType === "API";
+        return allAnswerers.projectType === "api";
       },
     },
     {
@@ -118,6 +120,30 @@ export default async (
     answerers.apiAppDBType === "mongodb"
   ) {
     await nodeMongodbRestProjectBuild({
+      folderName,
+      projectName: answerers.projectName,
+      useTypeScript: answerers.isTypeScriptProject,
+      packageManager: answerers.packageManager,
+      spinner,
+    });
+  }
+
+  if (answerers.apiAppType === "node-gql" && !answerers.includeDb) {
+    await nodeGQLProjectBuild({
+      folderName,
+      projectName: answerers.projectName,
+      useTypeScript: answerers.isTypeScriptProject,
+      packageManager: answerers.packageManager,
+      spinner,
+    });
+  }
+
+  if (
+    answerers.apiAppType === "node-gql" &&
+    answerers.includeDb &&
+    answerers.apiAppDBType === "mongodb"
+  ) {
+    await nodeMongodbGqlProjectBuild({
       folderName,
       projectName: answerers.projectName,
       useTypeScript: answerers.isTypeScriptProject,

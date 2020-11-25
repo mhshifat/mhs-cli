@@ -17,6 +17,12 @@ commander
   .arguments("<directory-name>")
   .description("Create a new project... 📦")
   .action((folderName) => {
+    console.log("\n");
+    console.log("          Welcome to NodeJS project generator! 😉");
+    console.log(
+      "          Answer few questions and we will setup everything for you. 🙌"
+    );
+    console.log("\n");
     if (!folderName) {
       console.log(chalk.red("Please specify a folder name...💣"));
       process.exit(1);
