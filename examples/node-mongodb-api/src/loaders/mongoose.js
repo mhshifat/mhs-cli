@@ -1,13 +1,13 @@
-import env from "./env";
+import { env } from "../config";
 
-export default function (url?: string) {
+export default function (url) {
   return require("mongoose")
     .connect(url || env.db.uri, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,
     })
-    .catch((err: any) => {
+    .catch((err) => {
       console.error("DB ERROR: " + err.message);
       process.exit(1);
     });

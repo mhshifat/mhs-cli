@@ -134,7 +134,7 @@ async function generateNodeMongoRestTSBoilerplate({
     `cd ${folderName} && ${packageManagerShellCmd} cors dotenv express helmet morgan mongoose`
   );
   await execShellCommand(
-    `cd ${folderName} && ${packageManagerShellCmd} ${asDev} typescript @types/node ts-node @types/cors @types/express @types/mongoose @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise nodemon`
+    `cd ${folderName} && ${packageManagerShellCmd} ${asDev} typescript @types/node ts-node @types/cors @types/express @types/mongoose @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise @types/morgan nodemon`
   );
   await execShellCommand(`cd ${folderName} && ${packageManager} install`);
   await writeToPackageJSON({ folderName, projectName });

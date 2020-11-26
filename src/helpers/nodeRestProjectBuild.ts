@@ -122,7 +122,7 @@ async function generateNodeRestTsBoilerplate({
     `cd ${folderName} && ${packageManagerShellCmd} cors dotenv express helmet morgan`
   );
   await execShellCommand(
-    `cd ${folderName} && ${packageManagerShellCmd} ${asDev} @types/cors @types/express @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise nodemon ts-node typescript`
+    `cd ${folderName} && ${packageManagerShellCmd} ${asDev} @types/cors @types/express @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise nodemon ts-node @types/morgan typescript`
   );
   await execShellCommand(`cd ${folderName} && ${packageManager} install`);
   await writeToPackageJSON({ folderName, projectName });
