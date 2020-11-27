@@ -48,6 +48,9 @@ export default async (
       name: "includeDb",
       message: "Do you want to include db setup in your project?",
       default: false,
+      when: (allAnswerers) => {
+        return allAnswerers.projectType === "api"
+      },
     },
     {
       type: "list",
