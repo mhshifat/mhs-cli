@@ -1,5 +1,5 @@
-import { connectToDb, env } from "./config";
-import { createServer } from "./loaders";
+import { env } from "./config";
+import { connectToDb, createServer } from "./loaders";
 
 (() => {
   const app = createServer();

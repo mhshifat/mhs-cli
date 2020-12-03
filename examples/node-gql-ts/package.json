@@ -2,9 +2,9 @@
   "name": "node-gql-ts",
   "version": "1.0.0",
   "description": "",
-  "main": "build/index.js",
+  "main": "build",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "node ./build",
     "build": "tsc -p .",
     "serve": "nodemon",
     "generate": "graphql-codegen --config codegen.yml"
