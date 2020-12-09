@@ -28,7 +28,11 @@ export const writeToPackageJSON = async ({
   return fs.writeFile(
     path.join(process.cwd() + "/" + folderName + "/package.json"),
     JSON.stringify(
-      { ...packageJSON, name: projectName || packageJSON.name },
+      {
+        ...packageJSON,
+        name: projectName || packageJSON.name,
+        eslintConfig: { ignorePatterns: "public" },
+      },
       null,
       2
     ),

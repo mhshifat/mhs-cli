@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { env } from "../config";
-import { errHandler, notFoundHandler } from "../helpers/handlers";
+import { errMiddleware, notFoundMiddleware } from "../middlewares";
 import routes from "../routes";
 
 export default () => {
@@ -16,8 +16,8 @@ export default () => {
   app.use(express.urlencoded({ extended: true }));
 
   app.use(env.apiPrefix, routes);
-  app.use(notFoundHandler);
-  app.use(errHandler);
+  app.use(notFoundMiddleware);
+  app.use(errMiddleware);
 
   return app;
 };
